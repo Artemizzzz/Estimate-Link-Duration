@@ -124,7 +124,6 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
         if (con.isUp()) {
 
             DTNHost otherHost = con.getOtherNode(getHost());
-            this.getOtherHost = null;
             this.getOtherHost = otherHost;
             this.startTimestamps.put(otherHost, SimClock.getTime());
 
