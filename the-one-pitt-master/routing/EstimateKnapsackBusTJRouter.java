@@ -27,7 +27,7 @@ import routing.community.Duration;
 
 /**
  *
- * @author Kalis
+ * @author Kenny
  */
 public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
     // timestamp for meeting a host in seconds
@@ -55,6 +55,7 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
     LinkedList<Message> tempMsgTerpilih;
     LinkedList<Message> tempMsgLowersUtil;
     Map<DTNHost, Integer> retrictionPerPeer;
+    List<Tuple<Tuple<Double,Double>,Double>> EstimateList;
     private DTNHost getOtherHost;
     private static final int bytes = 1000;
 
@@ -81,6 +82,7 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
         tempMsgTerpilih = new LinkedList<Message>();
         tempMsgLowersUtil = new LinkedList<Message>();
         retrictionPerPeer = new HashMap<DTNHost, Integer>();
+	EstimateList = New ArrayList<>();
         getOtherHost = null;
     }
 
@@ -114,6 +116,7 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
         tempMsgLowersUtil = r.tempMsgLowersUtil;
         getOtherHost = r.getOtherHost;
         retrictionPerPeer = r.retrictionPerPeer;
+	EstimateList = r.EstimateList;
     }
 
     @Override
@@ -182,7 +185,13 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
             if (etime - times > 0) {
                 history.add(new Duration(times, etime));
             }
+	   // get Estimate Value
+	    Tuple<Double,Double> estimate = getEstimateTimeDuration(getHost(), otherHost);
+	    double duration = etime- times;
 
+	    Tuple<Tuple<Double, Double>, Double> connectionInfo = new Tuple<>(estimate, duration);
+		
+	    this.EstimatelIst.add(connectionInfo);
             this.connHistory.put(otherHost, history);
             this.startTimestamps.remove(otherHost);
 
@@ -1055,7 +1064,9 @@ public class EstimateKnapsackBusTJRouter extends ActiveRouterForKnapsack {
     
     return new Tuple<>(min, max);
 }
-
+public List<Tuple<Tuple<Double, Double>, Double>> getEstimateList(){
+    return EstimateList;
+}
     public int getCapacityOFKnapsack(double time, int tfSpeed) {
         return (int) Math.ceil(time * tfSpeed);
     }
